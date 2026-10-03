@@ -1,0 +1,52 @@
+# ---------------------------------------------------------------------------
+# requirements_t3.txt - Installation für whisper_aggregator_t3.py
+#
+# Getestet am 2026-10-03 auf:
+#   Python 3.13 | Nvidia Tesla T4 (15 GiB) | Treiber 580.82.07 / CUDA 13.0
+#   Colab-Umgebung, Ubuntu-basiert
+#
+# Installation:
+#   pip install -r requirements_t3.txt
+#
+# Hinweis zu Abschnitt B (torch): Auf Colab und in den meisten GPU-Images ist
+# torch/torchaudio bereits vorinstalliert - pip meldet dann "already
+# satisfied". Nur wenn `python3 -c "import torch"` fehlschlägt, ist Abschnitt B
+# wirklich nötig.
+# ---------------------------------------------------------------------------
+
+# === A) Kern: Transkription (immer erforderlich) ==========================
+faster-whisper==1.2.1
+tqdm==4.67.3
+# von faster-whisper mitgeliefert und in dieser Kombination geprüft:
+#   ctranslate2==4.8.2   (CUDA-12-Build, braucht libcublas.so.12)
+#   av==19.0.1           (PyAV, MP3-Decode; >=19 braucht den Compat-Patch
+#                         im Skript, siehe readme_t3.md -> Troubleshooting)
+#   huggingface-hub==1.31.0
+#   tokenizers==0.23.2
+#   onnxruntime==1.30.0
+#   numpy>=2
+
+# === B) GPU-Laufzeit (Voraussetzung T4/CUDA) =============================
+# Index passend zum Treiber wählen:
+#   cu130 -> Treiber >= 580   (diese Umgebung)
+#   cu128 -> Treiber >= 560
+#   cu126 -> Treiber >= 550
+--extra-index-url https://download.pytorch.org/whl/cu130
+torch==2.11.0+cu130
+torchaudio==2.11.0+cu130
+
+# === C) GPU-Anzeige im Start-Header (optional, empfohlen) ================
+# liefert das Modul `pynvml` für "Tesla T4 (15 GiB VRAM, ... frei)"
+nvidia-ml-py==13.610.43
+
+# === D) Sprecher-Erkennung / Diarization (optional) ======================
+# Nur nötig für --enable-diarization.
+# Zugang zum Modell ist gated: einmalig auf
+#   https://huggingface.co/pyannote/speaker-diarization-3.1  -> "Agree"
+# und ein HF-Token bereitstellen (siehe readme_t3.md -> Diarization).
+pyannote.audio==4.0.7
+# von pyannote.audio mitgeliefert und geprüft:
+#   pyannote-core==6.0.1
+#   pyannote-pipeline==4.0.0
+#   lightning==2.6.6
+#   pytorch-lightning==2.6.6

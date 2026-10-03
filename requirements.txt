@@ -1,0 +1,5 @@
+faster-whisper>=1.0.0
+# av 19.x hat das 'metadata_errors'-Argument von av.open entfernt ->
+# das ist mit faster-whisper (decode_audio) inkompatibel.
+av>=12,<19
+tqdm>=4.66.0
